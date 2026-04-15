@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IKKI Sueños — Simulador de Amortización</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap');
+
+  :root {
+    --ikki-green: #00C853;
+    --ikki-green-dark: #00A344;
+    --ikki-green-light: #E8F9EF;
+    --ikki-green-glow: rgba(0,200,83,0.15);
+    --ikki-navy: #0D1B2A;
+    --ikki-slate: #324A5F;
+    --ikki-gray: #8B95A2;
+    --ikki-light: #F4F6F8;
+    --ikki-white: #FFFFFF;
+    --ikki-red: #FF4D6A;
+    --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --radius: 14px;
+    --shadow: 0 1px 3px rgba(13,27,42,0.06), 0 6px 16px rgba(13,27,42,0.04);
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--ikki-light);
+    color: var(--ikki-navy);
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .header {
+    background: var(--ikki-navy);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo-icon {
+    width: 34px; height: 34px;
+    background: var(--ikki-green);
+    border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 14px;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .header h1 {
+    font-family: var(--font-display);
+    font-weight: 700; font-size: 17px;
+    color: #fff;
+  }
+  .header h1 b { color: var(--ikki-green); font-weight: 700; }
+  .header .sub {
+    font-size: 12px; color: var(--ikki-gray);
+    margin-left: auto; font-weight: 500;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 20px 16px 60px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+  }
+  .card-head {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--ikki-light);
+    font-weight: 600; font-size: 13px;
+    color: var(--ikki-slate);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .card-body { padding: 18px; }
+
+  .field { margin-bottom: 16px; }
+  label {
+    display: block; font-size: 12px; font-weight: 600;
+    color: var(--ikki-slate); margin-bottom: 6px;
+  }
+  .iw {
+    position: relative;
+    display: flex; align-items: center;
+  }
+  .iw .pre, .iw .suf {
+    position: absolute; font-size: 13px; font-weight: 600;
+    color: var(--ikki-gray); pointer-events: none;
+    line-height: 1;
+  }
+  .iw .pre { left: 14px; }
+  .iw .suf { right: 14px; }
+  .iw input {
+    width: 100%; height: 48px;
+    border: 1.5px solid #DDE2E8;
+    border-radius: 10px;
+    font-family: var(--font-body);
+    font-size: 16px; font-weight: 600;
+    color: var(--ikki-navy);
+    padding: 0 14px;
+    outline: none;
+    background: #fff;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .iw input:focus {
+    border-color: var(--ikki-green);
+    box-shadow: 0 0 0 3px var(--ikki-green-glow);
+  }
+  .iw.hp input { padding-left: 32px; }
+  .iw.hs input { padding-right: 56px; }
+  input[type=number]::-webkit-inner-spin-button,
+  input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin:0; }
+  input[type=number] { -moz-appearance: textfield; }
+  .hint { font-size: 11px; color: var(--ikki-gray); margin-top: 5px; }
+  .hint b { color: var(--ikki-green-dark); font-weight: 600; }
+
+  #calcBtn {
+    display: block;
+    width: 100%; height: 52px;
+    border: none; border-radius: 12px;
+    font-family: var(--font-body);
+    font-size: 15px; font-weight: 700;
+    background: var(--ikki-green);
+    color: #fff;
+    cursor: pointer;
+    margin-top: 8px;
+    -webkit-tap-highlight-color: rgba(0,200,83,0.3);
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    box-shadow: 0 2px 8px rgba(0,200,83,0.25);
+    transition: background 0.2s;
+  }
+  #calcBtn:active {
+    background: var(--ikki-green-dark);
+  }
+
+  /* Summary */
+  .sr {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px; margin-bottom: 14px;
+  }
+  .sc {
+    background: var(--ikki-light);
+    border-radius: 12px;
+    padding: 14px 8px;
+    text-align: center;
+    min-width: 0;
+  }
+  .sc.hi { background: var(--ikki-green-light); }
+  .sc .sl {
+    font-size: 10px; font-weight: 600;
+    color: var(--ikki-gray);
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .sc .sv {
+    font-family: var(--font-display);
+    font-size: 17px; font-weight: 700;
+    color: var(--ikki-navy);
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+  .sc.hi .sv { color: var(--ikki-green-dark); }
+
+  /* Table */
+  .tw {
+    max-height: 480px;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tw::-webkit-scrollbar { width: 4px; height: 4px; }
+  .tw::-webkit-scrollbar-thumb { background: #C8CDD3; border-radius: 2px; }
+  table {
+    width: 100%; border-collapse: collapse;
+    font-size: 13px; min-width: 500px;
+  }
+  thead { position: sticky; top: 0; z-index: 2; }
+  th {
+    background: var(--ikki-navy);
+    color: #fff; font-weight: 600;
+    font-size: 10px; text-transform: uppercase;
+    letter-spacing: 0.4px;
+    padding: 11px 8px;
+    text-align: right; white-space: nowrap;
+  }
+  th:first-child { text-align: center; }
+  td {
+    padding: 9px 8px; text-align: right;
+    font-variant-numeric: tabular-nums;
+    border-bottom: 1px solid #F0F2F5;
+    font-weight: 500; white-space: nowrap;
+    font-size: 12px;
+  }
+  td:first-child { text-align: center; color: var(--ikki-gray); font-weight: 600; }
+  tr:last-child td { border-bottom: none; }
+  .ci { color: var(--ikki-red); }
+  .cp { color: var(--ikki-green-dark); }
+
+  .scrolltip {
+    display: none;
+    text-align: center;
+    font-size: 11px; color: var(--ikki-gray);
+    padding: 8px; font-weight: 500;
+  }
+
+  .empty {
+    text-align: center; padding: 50px 20px;
+    color: var(--ikki-gray);
+  }
+  .empty .ei {
+    width: 52px; height: 52px;
+    background: var(--ikki-green-light);
+    border-radius: 14px;
+    display: inline-flex; align-items: center; justify-content: center;
+    margin-bottom: 14px; font-size: 22px;
+  }
+  .empty p { font-size: 13px; line-height: 1.5; }
+
+  @media (max-width: 860px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .header { padding: 14px 16px; }
+    .header .sub { display: none; }
+    .container { padding: 14px 10px 60px; }
+    .grid { gap: 14px; }
+    .card { border-radius: 12px; }
+    .card-head { padding: 12px 14px; font-size: 12px; }
+    .card-body { padding: 14px; }
+    .sr { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+    .sr .fw { grid-column: 1 / -1; }
+    .sc .sv { font-size: 14px; }
+    .scrolltip { display: block; }
+    .scrolltip::before { content: '← '; }
+    .scrolltip::after { content: ' →'; }
+    .tw { max-height: 400px; }
+    table { min-width: 460px; }
+    th { padding: 10px 6px; font-size: 9px; }
+    td { padding: 8px 6px; font-size: 11px; }
+  }
+  @media (max-width: 380px) {
+    .sr { grid-template-columns: 1fr; }
+    .sr .fw { grid-column: auto; }
+    .sc .sv { font-size: 16px; }
+    table { min-width: 430px; }
+  }
+  @media (hover: hover) {
+    tbody tr:hover td { background: var(--ikki-green-light); }
+    #calcBtn:hover { background: var(--ikki-green-dark); }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo-icon">IK</div>
+  <h1><b>IKKI</b> Sueños</h1>
+  <span class="sub">Simulador de Amortización</span>
+</div>
+
+<div class="container">
+  <div class="grid">
+    <div class="card">
+      <div class="card-head">Parámetros del crédito</div>
+      <div class="card-body">
+        <div class="field">
+          <label for="monto">Monto del crédito</label>
+          <div class="iw hp">
+            <span class="pre">$</span>
+            <input type="text" id="monto" value="100,000,000" inputmode="numeric">
+          </div>
+        </div>
+        <div class="field">
+          <label for="tasaAnual">Tasa de interés anual (E.A.)</label>
+          <div class="iw hs">
+            <input type="number" id="tasaAnual" value="16.5" step="0.1" min="0" max="100" inputmode="decimal">
+            <span class="suf">%</span>
+          </div>
+          <div class="hint">Tasa mensual: <b id="tmh">1.28%</b></div>
+        </div>
+        <div class="field">
+          <label for="plazo">Plazo (meses)</label>
+          <div class="iw hs">
+            <input type="number" id="plazo" value="120" min="1" max="600" inputmode="numeric">
+            <span class="suf">meses</span>
+          </div>
+          <div class="hint" id="ph">10 años</div>
+        </div>
+        <div class="field">
+          <label for="seguro">Seguro + otros costos mensuales</label>
+          <div class="iw hp">
+            <span class="pre">$</span>
+            <input type="text" id="seguro" value="50,000" inputmode="numeric">
+          </div>
+          <div class="hint">Seguro de vida, incendio, administración, etc.</div>
+        </div>
+        <button type="button" id="calcBtn">Calcular amortización</button>
+      </div>
+    </div>
+
+    <div id="results">
+      <div class="card">
+        <div class="card-body">
+          <div class="empty">
+            <div class="ei">📊</div>
+            <p>Ingresa los datos y presiona<br><b>Calcular amortización</b></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  var montoEl = document.getElementById('monto');
+  var tasaEl = document.getElementById('tasaAnual');
+  var plazoEl = document.getElementById('plazo');
+  var seguroEl = document.getElementById('seguro');
+  var btnEl = document.getElementById('calcBtn');
+  var resultsEl = document.getElementById('results');
+  var tmhEl = document.getElementById('tmh');
+  var phEl = document.getElementById('ph');
+
+  function fmtCur(el) {
+    var v = el.value.replace(/[^0-9]/g, '');
+    if (!v) { el.value = ''; return; }
+    el.value = Number(v).toLocaleString('es-CO');
+  }
+
+  function parseCur(el) {
+    return Number(el.value.replace(/[^0-9]/g, '')) || 0;
+  }
+
+  function fmt(n) {
+    return Math.round(n).toLocaleString('es-CO');
+  }
+
+  function updateTM() {
+    var ea = parseFloat(tasaEl.value) || 0;
+    var m = (Math.pow(1 + ea / 100, 1/12) - 1) * 100;
+    tmhEl.textContent = m.toFixed(2) + '%';
+  }
+
+  function updatePlazoHint() {
+    var m = parseInt(plazoEl.value) || 0;
+    var y = Math.floor(m / 12);
+    var r = m % 12;
+    var t = '';
+    if (y > 0) t += y + (y === 1 ? ' año' : ' años');
+    if (r > 0) t += (y > 0 ? ', ' : '') + r + (r === 1 ? ' mes' : ' meses');
+    phEl.textContent = t || '—';
+  }
+
+  function calcular() {
+    var monto = parseCur(montoEl);
+    var ea = parseFloat(tasaEl.value) || 0;
+    var plazo = parseInt(plazoEl.value) || 0;
+    var seguro = parseCur(seguroEl);
+
+    if (monto <= 0 || plazo <= 0) {
+      alert('Ingresa un monto y plazo válidos');
+      return;
+    }
+
+    var im = Math.pow(1 + ea / 100, 1/12) - 1;
+    var cuota;
+    if (im === 0) {
+      cuota = monto / plazo;
+    } else {
+      cuota = monto * (im * Math.pow(1 + im, plazo)) / (Math.pow(1 + im, plazo) - 1);
+    }
+
+    var ct = cuota + seguro;
+    var saldo = monto;
+    var totalInt = 0;
+    var html = '';
+
+    // Build rows
+    var rowsHtml = '';
+    for (var i = 1; i <= plazo; i++) {
+      var interes = saldo * im;
+      var capital = cuota - interes;
+      saldo -= capital;
+      if (saldo < 1) saldo = 0;
+      totalInt += interes;
+      rowsHtml += '<tr><td>' + i + '</td><td>$' + fmt(ct) + '</td><td class="cp">$' + fmt(capital) + '</td><td class="ci">$' + fmt(interes) + '</td><td>$' + fmt(seguro) + '</td><td>$' + fmt(saldo) + '</td></tr>';
+    }
+
+    var totalPag = ct * plazo;
+    var totalSeg = seguro * plazo;
+
+    html = '<div class="sr">' +
+      '<div class="sc hi fw"><div class="sl">Cuota mensual total</div><div class="sv">$' + fmt(ct) + '</div></div>' +
+      '<div class="sc"><div class="sl">Capital + interés</div><div class="sv">$' + fmt(cuota) + '</div></div>' +
+      '<div class="sc"><div class="sl">Tasa mensual</div><div class="sv">' + (im*100).toFixed(2) + '%</div></div>' +
+      '</div>' +
+      '<div class="sr">' +
+      '<div class="sc"><div class="sl">Total a pagar</div><div class="sv">$' + fmt(totalPag) + '</div></div>' +
+      '<div class="sc"><div class="sl">Total intereses</div><div class="sv" style="color:var(--ikki-red)">$' + fmt(totalInt) + '</div></div>' +
+      '<div class="sc"><div class="sl">Seguros/costos</div><div class="sv">$' + fmt(totalSeg) + '</div></div>' +
+      '</div>' +
+      '<div class="card"><div class="card-head">Tabla de amortización — Cuota fija</div>' +
+      '<div style="padding:0">' +
+      '<div class="scrolltip">Desliza para ver toda la tabla</div>' +
+      '<div class="tw"><table><thead><tr><th>#</th><th>Cuota</th><th>Capital</th><th>Interés</th><th>Seguro</th><th>Saldo</th></tr></thead><tbody>' +
+      rowsHtml +
+      '</tbody></table></div></div></div>';
+
+    resultsEl.innerHTML = html;
+
+    // Scroll to results on mobile
+    if (window.innerWidth <= 860) {
+      setTimeout(function() {
+        resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 150);
+    }
+  }
+
+  // Event listeners (robust for mobile)
+  montoEl.addEventListener('input', function() { fmtCur(montoEl); });
+  seguroEl.addEventListener('input', function() { fmtCur(seguroEl); });
+  tasaEl.addEventListener('input', updateTM);
+  plazoEl.addEventListener('input', updatePlazoHint);
+
+  // Button: use both click and touchend for maximum mobile compatibility
+  btnEl.addEventListener('click', function(e) {
+    e.preventDefault();
+    calcular();
+  });
+
+  // Init
+  updateTM();
+  updatePlazoHint();
+  calcular();
+
+})();
+</script>
+</body>
+</html>
