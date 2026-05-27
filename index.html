@@ -1044,8 +1044,12 @@
       var ahorroInt = orig.totalInt - withAb.totalInt;
       var mesesAhorrados = orig.mesesReales - withAb.mesesReales;
       var totalPagOrig = orig.totalCuotas + seguro * orig.mesesReales;
+      // Total desembolsado con abonos = cuotas + seguros + ABONOS extra que el usuario puso de su bolsillo
+      var totalDesembolsoNew = withAb.totalCuotas + seguro * withAb.mesesReales + withAb.totalAbonos;
+      // Ahorro real = lo que paga de menos contando todo lo que sale de su bolsillo
+      var ahorroReal = totalPagOrig - totalDesembolsoNew;
+      // Para mostrar en el comparativo (sin contar abonos, solo lo que va al banco)
       var totalPagNew = withAb.totalCuotas + seguro * withAb.mesesReales;
-      var ahorroTotal = totalPagOrig - totalPagNew;
 
       var cuotaFinalNew = withAb.rows.length > 0 ? withAb.rows[withAb.rows.length - 1].cuota : cuota;
       var cuotaTrasAbono = cuota;
@@ -1092,8 +1096,10 @@
             '<div class="cmp-row"><span class="l"><b>Total desembolsado</b></span><span class="v"><b>$' + fmt(totalPagNew) + '</b></span></div>' +
           '</div>' +
         '</div>' +
-        '<div class="sr" style="margin-bottom:0;margin-top:8px">' +
-          '<div class="sc hi fw"><div class="sl">Ahorro total (intereses + tiempo)</div><div class="sv">$' + fmt(ahorroTotal > 0 ? ahorroTotal : 0) + '</div></div>' +
+        '<div class="sr" style="margin-bottom:0;margin-top:8px;grid-template-columns:repeat(3,1fr)">' +
+          '<div class="sc"><div class="sl">Desembolso original</div><div class="sv">$' + fmt(totalPagOrig) + '</div></div>' +
+          '<div class="sc"><div class="sl">Desembolso con abonos</div><div class="sv">$' + fmt(totalDesembolsoNew) + '</div><div style="font-size:9px;color:var(--ikki-gray);margin-top:3px">cuotas + abonos</div></div>' +
+          '<div class="sc hi"><div class="sl">Ahorro real</div><div class="sv">$' + fmt(ahorroReal > 0 ? ahorroReal : 0) + '</div></div>' +
         '</div>' +
       '</div></div>';
 
