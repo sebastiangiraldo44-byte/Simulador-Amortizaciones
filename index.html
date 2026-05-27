@@ -18,6 +18,11 @@
     --ikki-light: #F4F6F8;
     --ikki-white: #FFFFFF;
     --ikki-red: #FF4D6A;
+    --ikki-amber: #FFB020;
+    --ikki-amber-light: #FFF6E0;
+    --ikki-purple: #6C5CE7;
+    --ikki-purple-dark: #4834D4;
+    --ikki-purple-light: #EEEBFA;
     --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     --radius: 14px;
@@ -81,6 +86,7 @@
     box-shadow: var(--shadow);
     overflow: hidden;
   }
+  .card + .card { margin-top: 16px; }
   .card-head {
     padding: 14px 18px;
     border-bottom: 1px solid var(--ikki-light);
@@ -88,6 +94,16 @@
     color: var(--ikki-slate);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 10px;
+  }
+  .card-head .badge {
+    font-size: 10px;
+    background: var(--ikki-green-light);
+    color: var(--ikki-green-dark);
+    padding: 4px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.3px;
   }
   .card-body { padding: 18px; }
 
@@ -107,7 +123,7 @@
   }
   .iw .pre { left: 14px; }
   .iw .suf { right: 14px; }
-  .iw input {
+  .iw input, .iw select {
     width: 100%; height: 48px;
     border: 1.5px solid #DDE2E8;
     border-radius: 10px;
@@ -121,7 +137,14 @@
     appearance: none;
     transition: border-color 0.2s, box-shadow 0.2s;
   }
-  .iw input:focus {
+  .iw select {
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path fill='%238B95A2' d='M6 8L0 0h12z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 36px;
+    cursor: pointer;
+  }
+  .iw input:focus, .iw select:focus {
     border-color: var(--ikki-green);
     box-shadow: 0 0 0 3px var(--ikki-green-glow);
   }
@@ -133,25 +156,116 @@
   .hint { font-size: 11px; color: var(--ikki-gray); margin-top: 5px; }
   .hint b { color: var(--ikki-green-dark); font-weight: 600; }
 
-  #calcBtn {
+  .btn {
     display: block;
     width: 100%; height: 52px;
     border: none; border-radius: 12px;
     font-family: var(--font-body);
     font-size: 15px; font-weight: 700;
-    background: var(--ikki-green);
-    color: #fff;
     cursor: pointer;
-    margin-top: 8px;
     -webkit-tap-highlight-color: rgba(0,200,83,0.3);
     touch-action: manipulation;
     user-select: none;
     -webkit-user-select: none;
-    box-shadow: 0 2px 8px rgba(0,200,83,0.25);
-    transition: background 0.2s;
+    transition: background 0.2s, transform 0.1s;
   }
-  #calcBtn:active {
-    background: var(--ikki-green-dark);
+  .btn-primary {
+    background: var(--ikki-green);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0,200,83,0.25);
+    margin-top: 8px;
+  }
+  .btn-primary:active { background: var(--ikki-green-dark); }
+  .btn-secondary {
+    background: var(--ikki-navy);
+    color: #fff;
+    margin-top: 8px;
+  }
+  .btn-secondary:active { background: #1a2738; }
+  .btn-purple {
+    background: var(--ikki-purple);
+    color: #fff;
+    margin-top: 8px;
+    box-shadow: 0 2px 8px rgba(108,92,231,0.25);
+  }
+  .btn-purple:active { background: var(--ikki-purple-dark); }
+  .btn-ghost {
+    background: #fff;
+    color: var(--ikki-slate);
+    border: 1.5px solid #DDE2E8;
+    height: 42px;
+    font-size: 13px;
+  }
+  .btn-ghost:active { background: var(--ikki-light); }
+
+  /* Tabs / Mode switch */
+  .mode-switch {
+    display: flex;
+    background: var(--ikki-light);
+    border-radius: 10px;
+    padding: 4px;
+    margin-bottom: 14px;
+  }
+  .mode-switch button {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 10px;
+    font-family: var(--font-body);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ikki-slate);
+    border-radius: 7px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .mode-switch button.active {
+    background: #fff;
+    color: var(--ikki-navy);
+    box-shadow: 0 1px 3px rgba(13,27,42,0.08);
+  }
+
+  /* Abonos list */
+  .abonos-list {
+    margin-bottom: 12px;
+  }
+  .abono-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr auto;
+    gap: 8px;
+    align-items: end;
+    margin-bottom: 10px;
+    padding: 12px;
+    background: var(--ikki-amber-light);
+    border-radius: 10px;
+    border-left: 3px solid var(--ikki-amber);
+  }
+  .abono-row .field { margin-bottom: 0; }
+  .abono-row label { font-size: 10px; }
+  .abono-row .iw input, .abono-row .iw select { height: 40px; font-size: 13px; }
+  .abono-row .iw.hp input { padding-left: 26px; }
+  .abono-row .iw .pre { left: 10px; font-size: 12px; }
+  .abono-row .iw select { padding-right: 28px; background-position: right 10px center; }
+  .abono-del {
+    height: 40px; width: 40px;
+    border: none;
+    background: #fff;
+    color: var(--ikki-red);
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .abono-del:active { background: var(--ikki-light); }
+  .abonos-empty {
+    text-align: center;
+    padding: 16px;
+    color: var(--ikki-gray);
+    font-size: 12px;
+    background: var(--ikki-light);
+    border-radius: 10px;
+    margin-bottom: 10px;
   }
 
   /* Summary */
@@ -168,6 +282,7 @@
     min-width: 0;
   }
   .sc.hi { background: var(--ikki-green-light); }
+  .sc.warn { background: var(--ikki-amber-light); }
   .sc .sl {
     font-size: 10px; font-weight: 600;
     color: var(--ikki-gray);
@@ -184,6 +299,67 @@
     word-break: break-word;
   }
   .sc.hi .sv { color: var(--ikki-green-dark); }
+  .sc.warn .sv { color: #B47A00; }
+
+  /* Comparison */
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 14px;
+  }
+  .compare-col {
+    background: var(--ikki-light);
+    border-radius: 12px;
+    padding: 14px;
+  }
+  .compare-col.hi {
+    background: var(--ikki-green-light);
+    border: 1.5px solid var(--ikki-green);
+  }
+  .compare-col h4 {
+    font-family: var(--font-display);
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: var(--ikki-slate);
+    margin-bottom: 10px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .compare-col.hi h4 { color: var(--ikki-green-dark); }
+  .compare-col h4 .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--ikki-gray);
+    display: inline-block;
+  }
+  .compare-col.hi h4 .dot { background: var(--ikki-green); }
+  .cmp-row {
+    display: flex; justify-content: space-between;
+    padding: 6px 0;
+    font-size: 12px;
+    border-bottom: 1px dashed rgba(13,27,42,0.08);
+  }
+  .cmp-row:last-child { border-bottom: none; }
+  .cmp-row .l { color: var(--ikki-gray); font-weight: 500; }
+  .cmp-row .v { font-weight: 700; color: var(--ikki-navy); font-variant-numeric: tabular-nums; }
+
+  /* Chart */
+  .chart-wrap {
+    padding: 16px 18px 8px;
+    background: #fff;
+  }
+  .chart-legend {
+    display: flex; gap: 16px; flex-wrap: wrap;
+    margin-bottom: 8px;
+    font-size: 11px; font-weight: 600;
+    color: var(--ikki-slate);
+  }
+  .chart-legend .lg { display: flex; align-items: center; gap: 6px; }
+  .chart-legend .swatch {
+    width: 14px; height: 4px; border-radius: 2px;
+  }
+  svg.chart { width: 100%; height: auto; display: block; }
 
   /* Table */
   .tw {
@@ -195,7 +371,7 @@
   .tw::-webkit-scrollbar-thumb { background: #C8CDD3; border-radius: 2px; }
   table {
     width: 100%; border-collapse: collapse;
-    font-size: 13px; min-width: 500px;
+    font-size: 13px; min-width: 540px;
   }
   thead { position: sticky; top: 0; z-index: 2; }
   th {
@@ -216,8 +392,16 @@
   }
   td:first-child { text-align: center; color: var(--ikki-gray); font-weight: 600; }
   tr:last-child td { border-bottom: none; }
+  tr.row-abono td {
+    background: var(--ikki-amber-light) !important;
+  }
+  tr.row-abono td:first-child {
+    color: var(--ikki-amber);
+    position: relative;
+  }
   .ci { color: var(--ikki-red); }
   .cp { color: var(--ikki-green-dark); }
+  .ab { color: var(--ikki-amber); font-weight: 700; }
 
   .scrolltip {
     display: none;
@@ -239,6 +423,114 @@
   }
   .empty p { font-size: 13px; line-height: 1.5; }
 
+  .info-banner {
+    background: var(--ikki-amber-light);
+    border-left: 3px solid var(--ikki-amber);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12px;
+    color: var(--ikki-slate);
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+  .info-banner b { color: #B47A00; }
+  .info-banner.purple {
+    background: var(--ikki-purple-light);
+    border-left-color: var(--ikki-purple);
+  }
+  .info-banner.purple b { color: var(--ikki-purple-dark); }
+
+  /* Verdict card */
+  .verdict {
+    border-radius: 14px;
+    padding: 20px;
+    margin-bottom: 14px;
+    text-align: center;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .verdict.abonar { background: linear-gradient(135deg, #00C853, #00A344); }
+  .verdict.invertir { background: linear-gradient(135deg, #6C5CE7, #4834D4); }
+  .verdict .v-label {
+    font-size: 11px; font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    opacity: 0.85;
+    margin-bottom: 6px;
+  }
+  .verdict .v-title {
+    font-family: var(--font-display);
+    font-size: 22px; font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .verdict .v-diff {
+    font-size: 13px; opacity: 0.95; font-weight: 500;
+  }
+  .verdict .v-diff b { font-weight: 700; }
+
+  /* Investment radio tasa */
+  .seg {
+    display: inline-flex;
+    background: var(--ikki-light);
+    border-radius: 8px;
+    padding: 3px;
+    margin-left: auto;
+  }
+  .seg button {
+    border: none;
+    background: transparent;
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--ikki-gray);
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .seg button.active {
+    background: #fff;
+    color: var(--ikki-navy);
+    box-shadow: 0 1px 2px rgba(13,27,42,0.08);
+  }
+  .label-row {
+    display: flex; align-items: center;
+    margin-bottom: 6px;
+  }
+  .label-row label { margin-bottom: 0; }
+
+  /* Three column compare for investment */
+  .compare3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .compare3 .compare-col { padding: 12px; }
+  .compare-col.purple {
+    background: var(--ikki-purple-light);
+    border: 1.5px solid var(--ikki-purple);
+  }
+  .compare-col.purple h4 { color: var(--ikki-purple-dark); }
+  .compare-col.purple h4 .dot { background: var(--ikki-purple); }
+
+  tr.row-end td {
+    background: var(--ikki-light) !important;
+    font-weight: 700;
+    border-top: 2px solid var(--ikki-navy);
+  }
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+  .tag.win { background: var(--ikki-green-light); color: var(--ikki-green-dark); }
+  .tag.lose { background: #FFE0E5; color: var(--ikki-red); }
+
   @media (max-width: 860px) {
     .grid { grid-template-columns: 1fr; }
   }
@@ -253,23 +545,30 @@
     .sr { grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
     .sr .fw { grid-column: 1 / -1; }
     .sc .sv { font-size: 14px; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .compare3 { grid-template-columns: 1fr; }
     .scrolltip { display: block; }
     .scrolltip::before { content: '← '; }
     .scrolltip::after { content: ' →'; }
     .tw { max-height: 400px; }
-    table { min-width: 460px; }
+    table { min-width: 500px; }
     th { padding: 10px 6px; font-size: 9px; }
     td { padding: 8px 6px; font-size: 11px; }
+    .abono-row { grid-template-columns: 1fr 1fr; }
+    .abono-del { grid-column: 1 / -1; width: 100%; height: 36px; }
   }
   @media (max-width: 380px) {
     .sr { grid-template-columns: 1fr; }
     .sr .fw { grid-column: auto; }
     .sc .sv { font-size: 16px; }
-    table { min-width: 430px; }
+    table { min-width: 470px; }
   }
   @media (hover: hover) {
     tbody tr:hover td { background: var(--ikki-green-light); }
-    #calcBtn:hover { background: var(--ikki-green-dark); }
+    tbody tr.row-abono:hover td { background: #FFE9B0 !important; }
+    .btn-primary:hover { background: var(--ikki-green-dark); }
+    .btn-secondary:hover { background: #1a2738; }
+    .btn-ghost:hover { background: var(--ikki-light); }
   }
 </style>
 </head>
@@ -278,46 +577,112 @@
 <div class="header">
   <div class="logo-icon">IK</div>
   <h1><b>IKKI</b> Sueños</h1>
-  <span class="sub">Simulador de Amortización</span>
+  <span class="sub">Simulador de Amortización + Abonos</span>
 </div>
 
 <div class="container">
   <div class="grid">
-    <div class="card">
-      <div class="card-head">Parámetros del crédito</div>
-      <div class="card-body">
-        <div class="field">
-          <label for="monto">Monto del crédito</label>
-          <div class="iw hp">
-            <span class="pre">$</span>
-            <input type="text" id="monto" value="100,000,000" inputmode="numeric">
+    <div>
+      <div class="card">
+        <div class="card-head">Parámetros del crédito</div>
+        <div class="card-body">
+          <div class="field">
+            <label for="monto">Monto del crédito</label>
+            <div class="iw hp">
+              <span class="pre">$</span>
+              <input type="text" id="monto" value="100,000,000" inputmode="numeric">
+            </div>
           </div>
-        </div>
-        <div class="field">
-          <label for="tasaAnual">Tasa de interés anual (E.A.)</label>
-          <div class="iw hs">
-            <input type="number" id="tasaAnual" value="16.5" step="0.1" min="0" max="100" inputmode="decimal">
-            <span class="suf">%</span>
+          <div class="field">
+            <label for="tasaAnual">Tasa de interés anual (E.A.)</label>
+            <div class="iw hs">
+              <input type="number" id="tasaAnual" value="16.5" step="0.1" min="0" max="100" inputmode="decimal">
+              <span class="suf">%</span>
+            </div>
+            <div class="hint">Tasa mensual: <b id="tmh">1.28%</b></div>
           </div>
-          <div class="hint">Tasa mensual: <b id="tmh">1.28%</b></div>
-        </div>
-        <div class="field">
-          <label for="plazo">Plazo (meses)</label>
-          <div class="iw hs">
-            <input type="number" id="plazo" value="120" min="1" max="600" inputmode="numeric">
-            <span class="suf">meses</span>
+          <div class="field">
+            <label for="plazo">Plazo (meses)</label>
+            <div class="iw hs">
+              <input type="number" id="plazo" value="120" min="1" max="600" inputmode="numeric">
+              <span class="suf">meses</span>
+            </div>
+            <div class="hint" id="ph">10 años</div>
           </div>
-          <div class="hint" id="ph">10 años</div>
-        </div>
-        <div class="field">
-          <label for="seguro">Seguro + otros costos mensuales</label>
-          <div class="iw hp">
-            <span class="pre">$</span>
-            <input type="text" id="seguro" value="50,000" inputmode="numeric">
+          <div class="field">
+            <label for="seguro">Seguro + otros costos mensuales</label>
+            <div class="iw hp">
+              <span class="pre">$</span>
+              <input type="text" id="seguro" value="50,000" inputmode="numeric">
+            </div>
+            <div class="hint">Seguro de vida, incendio, administración, etc.</div>
           </div>
-          <div class="hint">Seguro de vida, incendio, administración, etc.</div>
+          <button type="button" id="calcBtn" class="btn btn-primary">Calcular amortización</button>
         </div>
-        <button type="button" id="calcBtn">Calcular amortización</button>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          Abonos a capital
+          <span class="badge">Opcional</span>
+        </div>
+        <div class="card-body">
+          <div class="info-banner">
+            Programa abonos extra en cuotas específicas para <b>ahorrar intereses</b> o <b>reducir el plazo</b>.
+          </div>
+
+          <div class="field">
+            <label>Efecto del abono</label>
+            <div class="mode-switch" id="modeSwitch">
+              <button type="button" data-mode="plazo" class="active">Reducir plazo</button>
+              <button type="button" data-mode="cuota">Reducir cuota</button>
+            </div>
+            <div class="hint" id="modeHint">El plazo se acorta y mantienes la misma cuota.</div>
+          </div>
+
+          <div id="abonosList" class="abonos-list"></div>
+          <button type="button" id="addAbonoBtn" class="btn btn-ghost">+ Agregar abono</button>
+
+          <button type="button" id="simBtn" class="btn btn-secondary">Simular abonos</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          Abonar vs Invertir
+          <span class="badge" style="background:var(--ikki-purple-light);color:var(--ikki-purple-dark)">Análisis</span>
+        </div>
+        <div class="card-body">
+          <div class="info-banner purple">
+            Compara si te conviene <b>abonar a capital</b> o <b>invertir ese dinero</b> en un negocio o instrumento financiero. Usa los abonos definidos arriba.
+          </div>
+
+          <div class="field">
+            <div class="label-row">
+              <label for="rentaInput" style="flex:1">Rentabilidad ofrecida</label>
+              <div class="seg" id="rentaSeg">
+                <button type="button" data-mode="ea" class="active">E.A.</button>
+                <button type="button" data-mode="mensual">Mensual</button>
+              </div>
+            </div>
+            <div class="iw hs">
+              <input type="number" id="rentaInput" value="14" step="0.1" min="0" max="200" inputmode="decimal">
+              <span class="suf">%</span>
+            </div>
+            <div class="hint">Equivalente: <b id="rentaEquiv">1.10% mensual</b></div>
+          </div>
+
+          <div class="field">
+            <label for="impuestoInput">Retención / impuesto sobre rendimientos</label>
+            <div class="iw hs">
+              <input type="number" id="impuestoInput" value="4" step="0.5" min="0" max="100" inputmode="decimal">
+              <span class="suf">%</span>
+            </div>
+            <div class="hint">En Colombia, retefuente sobre rendimientos financieros suele ser ~4% / 7%.</div>
+          </div>
+
+          <button type="button" id="compareBtn" class="btn btn-purple">Comparar abonar vs invertir</button>
+        </div>
       </div>
     </div>
 
@@ -338,27 +703,58 @@
 (function() {
   'use strict';
 
+  // ---------- Refs ----------
   var montoEl = document.getElementById('monto');
   var tasaEl = document.getElementById('tasaAnual');
   var plazoEl = document.getElementById('plazo');
   var seguroEl = document.getElementById('seguro');
   var btnEl = document.getElementById('calcBtn');
+  var simBtnEl = document.getElementById('simBtn');
   var resultsEl = document.getElementById('results');
   var tmhEl = document.getElementById('tmh');
   var phEl = document.getElementById('ph');
+  var abonosListEl = document.getElementById('abonosList');
+  var addAbonoBtnEl = document.getElementById('addAbonoBtn');
+  var modeSwitchEl = document.getElementById('modeSwitch');
+  var modeHintEl = document.getElementById('modeHint');
+  var rentaInputEl = document.getElementById('rentaInput');
+  var rentaEquivEl = document.getElementById('rentaEquiv');
+  var rentaSegEl = document.getElementById('rentaSeg');
+  var impuestoInputEl = document.getElementById('impuestoInput');
+  var compareBtnEl = document.getElementById('compareBtn');
 
+  var rentaMode = 'ea'; // 'ea' | 'mensual'
+
+  var abonoMode = 'plazo'; // 'plazo' | 'cuota'
+  var abonoCounter = 0;
+
+  // ---------- Utils ----------
   function fmtCur(el) {
     var v = el.value.replace(/[^0-9]/g, '');
     if (!v) { el.value = ''; return; }
     el.value = Number(v).toLocaleString('es-CO');
   }
-
   function parseCur(el) {
     return Number(el.value.replace(/[^0-9]/g, '')) || 0;
   }
-
   function fmt(n) {
     return Math.round(n).toLocaleString('es-CO');
+  }
+  function fmtCompact(n) {
+    var abs = Math.abs(n);
+    if (abs >= 1e9) return (n/1e9).toFixed(1) + 'B';
+    if (abs >= 1e6) return (n/1e6).toFixed(1) + 'M';
+    if (abs >= 1e3) return (n/1e3).toFixed(0) + 'K';
+    return Math.round(n).toString();
+  }
+  function plazoTxt(m) {
+    if (!m || m <= 0) return '—';
+    var y = Math.floor(m / 12);
+    var r = m % 12;
+    var t = '';
+    if (y > 0) t += y + (y === 1 ? ' año' : ' años');
+    if (r > 0) t += (y > 0 ? ', ' : '') + r + (r === 1 ? ' mes' : ' meses');
+    return t || (m + ' meses');
   }
 
   function updateTM() {
@@ -366,18 +762,247 @@
     var m = (Math.pow(1 + ea / 100, 1/12) - 1) * 100;
     tmhEl.textContent = m.toFixed(2) + '%';
   }
-
   function updatePlazoHint() {
     var m = parseInt(plazoEl.value) || 0;
-    var y = Math.floor(m / 12);
-    var r = m % 12;
-    var t = '';
-    if (y > 0) t += y + (y === 1 ? ' año' : ' años');
-    if (r > 0) t += (y > 0 ? ', ' : '') + r + (r === 1 ? ' mes' : ' meses');
-    phEl.textContent = t || '—';
+    phEl.textContent = plazoTxt(m);
   }
 
-  function calcular() {
+  // ---------- Cálculo de cuota (PMT) ----------
+  function calcCuota(monto, im, plazo) {
+    if (im === 0) return monto / plazo;
+    return monto * (im * Math.pow(1 + im, plazo)) / (Math.pow(1 + im, plazo) - 1);
+  }
+
+  // ---------- Simular amortización ----------
+  // mode: 'plazo' = cuota fija, plazo se acorta
+  // mode: 'cuota' = plazo fijo, cuota se recalcula tras cada abono
+  function simular(monto, im, plazoMax, cuotaInicial, abonosMap, mode) {
+    var saldo = monto;
+    var cuota = cuotaInicial;
+    var totalInt = 0;
+    var totalAbonos = 0;
+    var totalCuotas = 0;
+    var rows = [];
+
+    for (var i = 1; i <= plazoMax && saldo > 0.5; i++) {
+      var interes = saldo * im;
+      var capital = cuota - interes;
+      if (capital < 0) capital = 0;
+
+      // Capital no puede ser mayor al saldo
+      if (capital > saldo) capital = saldo;
+
+      var cuotaReal = capital + interes;
+      saldo -= capital;
+
+      var abono = abonosMap[i] || 0;
+      if (abono > 0) {
+        if (abono > saldo) abono = saldo;
+        saldo -= abono;
+        totalAbonos += abono;
+
+        // Si reduce cuota: recalcular para meses restantes
+        if (mode === 'cuota' && saldo > 0.5 && (plazoMax - i) > 0) {
+          cuota = calcCuota(saldo, im, plazoMax - i);
+        }
+      }
+
+      if (saldo < 0.5) saldo = 0;
+      totalInt += interes;
+      totalCuotas += cuotaReal;
+
+      rows.push({
+        mes: i,
+        cuota: cuotaReal,
+        capital: capital,
+        interes: interes,
+        abono: abono,
+        saldo: saldo
+      });
+
+      if (saldo === 0) break;
+    }
+
+    return {
+      rows: rows,
+      totalInt: totalInt,
+      totalAbonos: totalAbonos,
+      totalCuotas: totalCuotas,
+      mesesReales: rows.length
+    };
+  }
+
+  // ---------- Render: tabla ----------
+  function renderTable(rows, seguro, title) {
+    var rowsHtml = '';
+    for (var k = 0; k < rows.length; k++) {
+      var r = rows[k];
+      var cls = r.abono > 0 ? ' class="row-abono"' : '';
+      rowsHtml += '<tr' + cls + '>' +
+        '<td>' + r.mes + '</td>' +
+        '<td>$' + fmt(r.cuota + seguro) + '</td>' +
+        '<td class="cp">$' + fmt(r.capital) + '</td>' +
+        '<td class="ci">$' + fmt(r.interes) + '</td>' +
+        '<td class="ab">' + (r.abono > 0 ? '$' + fmt(r.abono) : '—') + '</td>' +
+        '<td>$' + fmt(r.saldo) + '</td>' +
+      '</tr>';
+    }
+    return '<div class="card"><div class="card-head">' + title + '</div>' +
+      '<div style="padding:0">' +
+      '<div class="scrolltip">Desliza para ver toda la tabla</div>' +
+      '<div class="tw"><table><thead><tr>' +
+      '<th>#</th><th>Cuota</th><th>Capital</th><th>Interés</th><th>Abono</th><th>Saldo</th>' +
+      '</tr></thead><tbody>' + rowsHtml + '</tbody></table></div></div></div>';
+  }
+
+  // ---------- Render: gráfico de saldos ----------
+  function renderChart(rowsOrig, rowsNew) {
+    var W = 700, H = 240, P = { t: 12, r: 14, b: 24, l: 50 };
+    var maxX = Math.max(rowsOrig.length, rowsNew ? rowsNew.length : 0);
+    var maxY = 0;
+    for (var i = 0; i < rowsOrig.length; i++) if (rowsOrig[i].saldo > maxY) maxY = rowsOrig[i].saldo;
+    if (rowsNew) for (var j = 0; j < rowsNew.length; j++) if (rowsNew[j].saldo > maxY) maxY = rowsNew[j].saldo;
+    if (maxY === 0) maxY = 1;
+
+    function x(m) { return P.l + (m / maxX) * (W - P.l - P.r); }
+    function y(v) { return P.t + (1 - v / maxY) * (H - P.t - P.b); }
+
+    function path(rows) {
+      var d = 'M ' + x(0) + ' ' + y(rows[0] ? rows[0].saldo + rows[0].capital + (rows[0].abono||0) : maxY);
+      // start with original principal
+      // simpler: build from rows
+      d = '';
+      var prev = null;
+      // initial point at mes 0 with full principal
+      if (rows.length > 0) {
+        // approximate principal = rows[0].saldo + rows[0].capital + rows[0].abono
+        var principal = rows[0].saldo + rows[0].capital + (rows[0].abono || 0);
+        d += 'M ' + x(0) + ' ' + y(principal);
+        for (var i = 0; i < rows.length; i++) {
+          d += ' L ' + x(rows[i].mes) + ' ' + y(rows[i].saldo);
+        }
+      }
+      return d;
+    }
+
+    // Y axis labels
+    var yLabels = '';
+    for (var t = 0; t <= 4; t++) {
+      var val = maxY * (1 - t/4);
+      var yy = P.t + (t/4) * (H - P.t - P.b);
+      yLabels += '<line x1="'+P.l+'" y1="'+yy+'" x2="'+(W-P.r)+'" y2="'+yy+'" stroke="#EEF1F4" stroke-width="1"/>';
+      yLabels += '<text x="'+(P.l-6)+'" y="'+(yy+4)+'" text-anchor="end" font-size="10" fill="#8B95A2" font-family="DM Sans">$'+fmtCompact(val)+'</text>';
+    }
+
+    // X axis labels (años)
+    var xLabels = '';
+    var totalYears = Math.ceil(maxX / 12);
+    var step = totalYears <= 10 ? 1 : (totalYears <= 25 ? 2 : 5);
+    for (var yr = 0; yr <= totalYears; yr += step) {
+      var m = yr * 12;
+      if (m > maxX) m = maxX;
+      var xx = x(m);
+      xLabels += '<text x="'+xx+'" y="'+(H-6)+'" text-anchor="middle" font-size="10" fill="#8B95A2" font-family="DM Sans">'+yr+'a</text>';
+    }
+
+    var pathOrig = path(rowsOrig);
+    var pathNew = rowsNew ? path(rowsNew) : '';
+
+    // Abono markers
+    var markers = '';
+    if (rowsNew) {
+      for (var k = 0; k < rowsNew.length; k++) {
+        if (rowsNew[k].abono > 0) {
+          markers += '<circle cx="'+x(rowsNew[k].mes)+'" cy="'+y(rowsNew[k].saldo)+'" r="4" fill="#FFB020" stroke="#fff" stroke-width="2"/>';
+        }
+      }
+    }
+
+    var svg = '<svg class="chart" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">' +
+      yLabels + xLabels +
+      '<path d="'+pathOrig+'" fill="none" stroke="#8B95A2" stroke-width="2" stroke-dasharray="4 4"/>' +
+      (pathNew ? '<path d="'+pathNew+'" fill="none" stroke="#00C853" stroke-width="2.5"/>' : '') +
+      markers +
+    '</svg>';
+
+    var legend = '<div class="chart-legend">' +
+      '<div class="lg"><span class="swatch" style="background:#8B95A2"></span>Crédito original</div>' +
+      (rowsNew ? '<div class="lg"><span class="swatch" style="background:#00C853"></span>Con abonos</div>' : '') +
+      (rowsNew ? '<div class="lg"><span style="width:8px;height:8px;border-radius:50%;background:#FFB020;display:inline-block"></span>Abono aplicado</div>' : '') +
+    '</div>';
+
+    return '<div class="card"><div class="card-head">Evolución del saldo</div>' +
+      '<div class="chart-wrap">' + legend + svg + '</div></div>';
+  }
+
+  // ---------- Abonos UI ----------
+  function addAbonoRow(mes, monto) {
+    abonoCounter++;
+    var id = 'ab_' + abonoCounter;
+    var plazo = parseInt(plazoEl.value) || 120;
+
+    var row = document.createElement('div');
+    row.className = 'abono-row';
+    row.dataset.id = id;
+    row.innerHTML =
+      '<div class="field">' +
+        '<label>Cuota #</label>' +
+        '<div class="iw">' +
+          '<input type="number" class="ab-mes" min="1" max="'+plazo+'" value="'+(mes||12)+'" inputmode="numeric">' +
+        '</div>' +
+      '</div>' +
+      '<div class="field">' +
+        '<label>Monto del abono</label>' +
+        '<div class="iw hp">' +
+          '<span class="pre">$</span>' +
+          '<input type="text" class="ab-monto" value="'+(monto||'10,000,000')+'" inputmode="numeric">' +
+        '</div>' +
+      '</div>' +
+      '<button type="button" class="abono-del" title="Eliminar">×</button>';
+
+    abonosListEl.appendChild(row);
+
+    // listeners
+    var montoInput = row.querySelector('.ab-monto');
+    montoInput.addEventListener('input', function() { fmtCur(montoInput); });
+    row.querySelector('.abono-del').addEventListener('click', function() {
+      row.remove();
+      refreshAbonosEmpty();
+    });
+
+    refreshAbonosEmpty();
+  }
+
+  function refreshAbonosEmpty() {
+    var existing = abonosListEl.querySelector('.abonos-empty');
+    var hasRows = abonosListEl.querySelectorAll('.abono-row').length > 0;
+    if (!hasRows && !existing) {
+      var d = document.createElement('div');
+      d.className = 'abonos-empty';
+      d.textContent = 'Aún no has agregado abonos. Toca "Agregar abono" para empezar.';
+      abonosListEl.appendChild(d);
+    } else if (hasRows && existing) {
+      existing.remove();
+    }
+  }
+
+  function getAbonos() {
+    var rows = abonosListEl.querySelectorAll('.abono-row');
+    var map = {};
+    var list = [];
+    rows.forEach(function(r) {
+      var mes = parseInt(r.querySelector('.ab-mes').value) || 0;
+      var monto = parseCur(r.querySelector('.ab-monto'));
+      if (mes > 0 && monto > 0) {
+        map[mes] = (map[mes] || 0) + monto;
+        list.push({ mes: mes, monto: monto });
+      }
+    });
+    return { map: map, list: list };
+  }
+
+  // ---------- Cálculo principal ----------
+  function calcular(withAbonos) {
     var monto = parseCur(montoEl);
     var ea = parseFloat(tasaEl.value) || 0;
     var plazo = parseInt(plazoEl.value) || 0;
@@ -389,52 +1014,111 @@
     }
 
     var im = Math.pow(1 + ea / 100, 1/12) - 1;
-    var cuota;
-    if (im === 0) {
-      cuota = monto / plazo;
-    } else {
-      cuota = monto * (im * Math.pow(1 + im, plazo)) / (Math.pow(1 + im, plazo) - 1);
-    }
+    var cuota = calcCuota(monto, im, plazo);
 
-    var ct = cuota + seguro;
-    var saldo = monto;
-    var totalInt = 0;
+    // Original (sin abonos)
+    var orig = simular(monto, im, plazo, cuota, {}, 'plazo');
+
     var html = '';
 
-    // Build rows
-    var rowsHtml = '';
-    for (var i = 1; i <= plazo; i++) {
-      var interes = saldo * im;
-      var capital = cuota - interes;
-      saldo -= capital;
-      if (saldo < 1) saldo = 0;
-      totalInt += interes;
-      rowsHtml += '<tr><td>' + i + '</td><td>$' + fmt(ct) + '</td><td class="cp">$' + fmt(capital) + '</td><td class="ci">$' + fmt(interes) + '</td><td>$' + fmt(seguro) + '</td><td>$' + fmt(saldo) + '</td></tr>';
-    }
+    if (withAbonos) {
+      var abonosData = getAbonos();
+      if (abonosData.list.length === 0) {
+        alert('Agrega al menos un abono para simular.');
+        return;
+      }
+      // Validar que las cuotas estén dentro del plazo
+      var invalid = abonosData.list.filter(function(a) { return a.mes > plazo; });
+      if (invalid.length > 0) {
+        alert('Hay abonos en cuotas mayores al plazo del crédito.');
+        return;
+      }
 
-    var totalPag = ct * plazo;
-    var totalSeg = seguro * plazo;
+      // Con abonos: el plazo máximo de iteración debe permitir extender si reduce cuota
+      // pero al reducir cuota mantenemos plazo. Al reducir plazo iteramos hasta saldar.
+      var plazoMaxSim = abonoMode === 'plazo' ? plazo + 1 : plazo;
+      var withAb = simular(monto, im, plazoMaxSim, cuota, abonosData.map, abonoMode);
 
-    html = '<div class="sr">' +
-      '<div class="sc hi fw"><div class="sl">Cuota mensual total</div><div class="sv">$' + fmt(ct) + '</div></div>' +
-      '<div class="sc"><div class="sl">Capital + interés</div><div class="sv">$' + fmt(cuota) + '</div></div>' +
-      '<div class="sc"><div class="sl">Tasa mensual</div><div class="sv">' + (im*100).toFixed(2) + '%</div></div>' +
+      var ahorroInt = orig.totalInt - withAb.totalInt;
+      var mesesAhorrados = orig.mesesReales - withAb.mesesReales;
+      var totalPagOrig = orig.totalCuotas + seguro * orig.mesesReales;
+      var totalPagNew = withAb.totalCuotas + seguro * withAb.mesesReales;
+      var ahorroTotal = totalPagOrig - totalPagNew;
+
+      var cuotaFinalNew = withAb.rows.length > 0 ? withAb.rows[withAb.rows.length - 1].cuota : cuota;
+      var cuotaTrasAbono = cuota;
+      if (abonoMode === 'cuota' && withAb.rows.length > 0) {
+        // encontrar primera cuota después del último abono
+        var lastAbonoMes = Math.max.apply(null, abonosData.list.map(function(a){ return a.mes; }));
+        for (var rr = 0; rr < withAb.rows.length; rr++) {
+          if (withAb.rows[rr].mes > lastAbonoMes) {
+            cuotaTrasAbono = withAb.rows[rr].cuota;
+            break;
+          }
+        }
+      }
+
+      // Summary
+      html += '<div class="sr">' +
+        '<div class="sc hi fw"><div class="sl">Intereses ahorrados</div><div class="sv">$' + fmt(ahorroInt) + '</div></div>' +
+        (abonoMode === 'plazo'
+          ? '<div class="sc warn"><div class="sl">Tiempo reducido</div><div class="sv">' + plazoTxt(mesesAhorrados) + '</div></div>'
+          : '<div class="sc warn"><div class="sl">Nueva cuota</div><div class="sv">$' + fmt(cuotaTrasAbono + seguro) + '</div></div>'
+        ) +
+        '<div class="sc"><div class="sl">Total abonado</div><div class="sv">$' + fmt(withAb.totalAbonos) + '</div></div>' +
+      '</div>';
+
+      // Comparativo
+      html += '<div class="card"><div class="card-head">Comparativo</div><div class="card-body">' +
+        '<div class="compare-grid">' +
+          '<div class="compare-col">' +
+            '<h4><span class="dot"></span>Crédito original</h4>' +
+            '<div class="cmp-row"><span class="l">Cuota mensual</span><span class="v">$' + fmt(cuota + seguro) + '</span></div>' +
+            '<div class="cmp-row"><span class="l">Plazo</span><span class="v">' + plazoTxt(orig.mesesReales) + '</span></div>' +
+            '<div class="cmp-row"><span class="l">Intereses</span><span class="v">$' + fmt(orig.totalInt) + '</span></div>' +
+            '<div class="cmp-row"><span class="l">Total a pagar</span><span class="v">$' + fmt(totalPagOrig) + '</span></div>' +
+          '</div>' +
+          '<div class="compare-col hi">' +
+            '<h4><span class="dot"></span>Con abonos</h4>' +
+            '<div class="cmp-row"><span class="l">Cuota '+(abonoMode==='cuota'?'final':'mensual')+'</span><span class="v">$' + fmt(cuotaTrasAbono + seguro) + '</span></div>' +
+            '<div class="cmp-row"><span class="l">Plazo</span><span class="v">' + plazoTxt(withAb.mesesReales) + '</span></div>' +
+            '<div class="cmp-row"><span class="l">Intereses</span><span class="v">$' + fmt(withAb.totalInt) + '</span></div>' +
+            '<div class="cmp-row"><span class="l">Total a pagar</span><span class="v">$' + fmt(totalPagNew) + '</span></div>' +
+          '</div>' +
+        '</div>' +
+        '<div class="sr" style="margin-bottom:0;margin-top:8px">' +
+          '<div class="sc hi fw"><div class="sl">Ahorro total (intereses + tiempo)</div><div class="sv">$' + fmt(ahorroTotal > 0 ? ahorroTotal : 0) + '</div></div>' +
+        '</div>' +
+      '</div></div>';
+
+      // Chart
+      html += renderChart(orig.rows, withAb.rows);
+
+      // Table con abonos
+      html += renderTable(withAb.rows, seguro, 'Tabla de amortización — Con abonos');
+
+    } else {
+      // Sin abonos
+      var totalPag = orig.totalCuotas + seguro * orig.mesesReales;
+      var totalSeg = seguro * orig.mesesReales;
+
+      html = '<div class="sr">' +
+        '<div class="sc hi fw"><div class="sl">Cuota mensual total</div><div class="sv">$' + fmt(cuota + seguro) + '</div></div>' +
+        '<div class="sc"><div class="sl">Capital + interés</div><div class="sv">$' + fmt(cuota) + '</div></div>' +
+        '<div class="sc"><div class="sl">Tasa mensual</div><div class="sv">' + (im*100).toFixed(2) + '%</div></div>' +
       '</div>' +
       '<div class="sr">' +
-      '<div class="sc"><div class="sl">Total a pagar</div><div class="sv">$' + fmt(totalPag) + '</div></div>' +
-      '<div class="sc"><div class="sl">Total intereses</div><div class="sv" style="color:var(--ikki-red)">$' + fmt(totalInt) + '</div></div>' +
-      '<div class="sc"><div class="sl">Seguros/costos</div><div class="sv">$' + fmt(totalSeg) + '</div></div>' +
-      '</div>' +
-      '<div class="card"><div class="card-head">Tabla de amortización — Cuota fija</div>' +
-      '<div style="padding:0">' +
-      '<div class="scrolltip">Desliza para ver toda la tabla</div>' +
-      '<div class="tw"><table><thead><tr><th>#</th><th>Cuota</th><th>Capital</th><th>Interés</th><th>Seguro</th><th>Saldo</th></tr></thead><tbody>' +
-      rowsHtml +
-      '</tbody></table></div></div></div>';
+        '<div class="sc"><div class="sl">Total a pagar</div><div class="sv">$' + fmt(totalPag) + '</div></div>' +
+        '<div class="sc"><div class="sl">Total intereses</div><div class="sv" style="color:var(--ikki-red)">$' + fmt(orig.totalInt) + '</div></div>' +
+        '<div class="sc"><div class="sl">Seguros/costos</div><div class="sv">$' + fmt(totalSeg) + '</div></div>' +
+      '</div>';
+
+      html += renderChart(orig.rows, null);
+      html += renderTable(orig.rows, seguro, 'Tabla de amortización — Cuota fija');
+    }
 
     resultsEl.innerHTML = html;
 
-    // Scroll to results on mobile
     if (window.innerWidth <= 860) {
       setTimeout(function() {
         resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -442,22 +1126,333 @@
     }
   }
 
-  // Event listeners (robust for mobile)
+  // ---------- Renta: actualizar equivalente ----------
+  function updateRentaEquiv() {
+    var v = parseFloat(rentaInputEl.value) || 0;
+    var ea, mensual;
+    if (rentaMode === 'ea') {
+      ea = v;
+      mensual = (Math.pow(1 + v/100, 1/12) - 1) * 100;
+      rentaEquivEl.innerHTML = mensual.toFixed(2) + '% mensual';
+    } else {
+      mensual = v;
+      ea = (Math.pow(1 + v/100, 12) - 1) * 100;
+      rentaEquivEl.innerHTML = ea.toFixed(2) + '% E.A.';
+    }
+  }
+
+  function getRentaMensual() {
+    var v = parseFloat(rentaInputEl.value) || 0;
+    if (rentaMode === 'ea') return Math.pow(1 + v/100, 1/12) - 1;
+    return v / 100;
+  }
+
+  // ---------- Comparar Abonar vs Invertir ----------
+  function compararAbonarVsInvertir() {
+    var monto = parseCur(montoEl);
+    var ea = parseFloat(tasaEl.value) || 0;
+    var plazo = parseInt(plazoEl.value) || 0;
+    var seguro = parseCur(seguroEl);
+
+    if (monto <= 0 || plazo <= 0) {
+      alert('Ingresa un monto y plazo válidos en el crédito');
+      return;
+    }
+
+    var abonosData = getAbonos();
+    if (abonosData.list.length === 0) {
+      alert('Agrega al menos un abono para comparar.');
+      return;
+    }
+
+    var im = Math.pow(1 + ea/100, 1/12) - 1; // tasa mensual crédito
+    var ri = getRentaMensual(); // tasa mensual inversión
+    var impPct = (parseFloat(impuestoInputEl.value) || 0) / 100;
+
+    var cuota = calcCuota(monto, im, plazo);
+
+    // Escenario 1: SIN abonos (original)
+    var orig = simular(monto, im, plazo, cuota, {}, 'plazo');
+
+    // Escenario 2: CON abonos (reduciendo plazo - el más común para esta comparación)
+    var plazoMaxSim = plazo + 12;
+    var withAb = simular(monto, im, plazoMaxSim, cuota, abonosData.map, 'plazo');
+
+    // Ahorro real de intereses por abonar
+    var ahorroIntereses = orig.totalInt - withAb.totalInt;
+    // Total invertido en abonos
+    var totalAbonado = withAb.totalAbonos;
+
+    // Escenario 3: Invertir los abonos en lugar de abonar
+    // El usuario sigue pagando el crédito normal (cuota fija) durante todo el plazo original
+    // y cada "abono" lo deposita en la inversión, que crece mes a mes
+    // Construir línea de tiempo de la inversión
+    var horizonte = orig.mesesReales; // comparamos al final del crédito original
+    var saldoInvBruto = 0;
+    var saldoInvNeto = 0;
+    var aportadoAcum = 0;
+    var rendimientoBrutoAcum = 0;
+    var rendimientoNetoAcum = 0;
+    var invRows = [];
+
+    // Para tabla mensual también necesitamos el ahorro de intereses acumulado mes a mes
+    // Computar ahorro acumulado: comparar interés mes a mes orig vs withAb
+    // Como los plazos difieren, alineamos por mes hasta el horizonte
+    var ahorroAcumByMonth = new Array(horizonte + 1).fill(0);
+    var intOrigAcum = 0, intWithAcum = 0;
+    for (var i = 1; i <= horizonte; i++) {
+      var intO = (i <= orig.rows.length) ? orig.rows[i-1].interes : 0;
+      var intW = (i <= withAb.rows.length) ? withAb.rows[i-1].interes : 0;
+      intOrigAcum += intO;
+      intWithAcum += intW;
+      // Si el crédito con abonos ya terminó, las cuotas que el usuario "no paga" liberan dinero;
+      // para comparación financiera estricta, ahorro = intereses originales - intereses con abono
+      // (en meses donde ya terminó el crédito, intW=0 y eso ya cuenta el ahorro completo)
+      ahorroAcumByMonth[i] = intOrigAcum - intWithAcum;
+    }
+
+    // Inversión: en el mes M se aporta el abono, y crece a tasa ri compuesta
+    for (var m = 1; m <= horizonte; m++) {
+      // Rendimiento del mes sobre el saldo existente
+      var rendMes = saldoInvBruto * ri;
+      rendimientoBrutoAcum += rendMes;
+      var retencionMes = rendMes * impPct;
+      var rendNeto = rendMes - retencionMes;
+      rendimientoNetoAcum += rendNeto;
+
+      saldoInvBruto += rendMes;
+      saldoInvNeto += rendNeto;
+
+      // Aporte de este mes (si hay abono programado)
+      var aporte = abonosData.map[m] || 0;
+      if (aporte > 0) {
+        saldoInvBruto += aporte;
+        saldoInvNeto += aporte;
+        aportadoAcum += aporte;
+      }
+
+      invRows.push({
+        mes: m,
+        aporte: aporte,
+        aportadoAcum: aportadoAcum,
+        saldoInvBruto: saldoInvBruto,
+        saldoInvNeto: saldoInvNeto,
+        rendBrutoAcum: rendimientoBrutoAcum,
+        rendNetoAcum: rendimientoNetoAcum,
+        ahorroAcum: ahorroAcumByMonth[m] || 0
+      });
+    }
+
+    // Valor neto final de cada opción
+    // Opción A (Abonar): el patrimonio al final del horizonte = ahorro de intereses generado
+    //                    (el dinero ya no está, pero se evitó pagarlo en intereses)
+    var valorOpcionAbonar = ahorroIntereses;
+    // Opción B (Invertir): saldo de la inversión al final menos lo que se "habría ahorrado en intereses"
+    //                      No, en realidad: si invierte, sigue pagando intereses completos del crédito
+    //                      El "patrimonio" final = saldo de inversión
+    //                      Pero hay que descontarle el dinero extra pagado en intereses (que en el escenario abonar se ahorra)
+    // La comparación más limpia:
+    //   Patrimonio final si abonas = saldo inversión (0) + ahorro de intereses = ahorroIntereses
+    //   Patrimonio final si inviertes = saldo inversión - 0 = saldoInvNeto (pagaste intereses completos)
+    //   Pero ambos aportaron la misma cantidad de dinero (totalAbonado), así que el "delta" es lo justo a comparar
+    //
+    // Mejor: Ganancia neta de cada opción sobre el dinero aportado
+    //   Abonar: ahorro de intereses (=ganancia sin pagar impuestos, no es renta gravable)
+    //   Invertir: rendimiento neto acumulado al final del horizonte
+
+    var gananciaAbonar = ahorroIntereses;
+    var gananciaInvertirBruta = rendimientoBrutoAcum;
+    var gananciaInvertirNeta = rendimientoNetoAcum;
+    var diferenciaNeta = gananciaAbonar - gananciaInvertirNeta;
+    var ganador = diferenciaNeta >= 0 ? 'abonar' : 'invertir';
+
+    // ---- Render ----
+    var html = '';
+
+    // Verdict
+    if (ganador === 'abonar') {
+      html += '<div class="verdict abonar">' +
+        '<div class="v-label">Mejor opción</div>' +
+        '<div class="v-title">Abonar a capital 🟢</div>' +
+        '<div class="v-diff">Te ahorras <b>$' + fmt(diferenciaNeta) + '</b> más que si inviertes a esa rentabilidad.</div>' +
+      '</div>';
+    } else {
+      html += '<div class="verdict invertir">' +
+        '<div class="v-label">Mejor opción</div>' +
+        '<div class="v-title">Invertir el dinero 🟣</div>' +
+        '<div class="v-diff">Ganas <b>$' + fmt(-diferenciaNeta) + '</b> más invirtiendo que abonando a capital.</div>' +
+      '</div>';
+    }
+
+    // Resumen 3 columnas
+    html += '<div class="card"><div class="card-head">Resumen comparativo</div><div class="card-body">' +
+      '<div class="compare3">' +
+        '<div class="compare-col">' +
+          '<h4><span class="dot"></span>Dinero aportado</h4>' +
+          '<div class="cmp-row"><span class="l">Total aportado</span><span class="v">$' + fmt(totalAbonado) + '</span></div>' +
+          '<div class="cmp-row"><span class="l">N° abonos</span><span class="v">' + abonosData.list.length + '</span></div>' +
+          '<div class="cmp-row"><span class="l">Horizonte</span><span class="v">' + plazoTxt(horizonte) + '</span></div>' +
+        '</div>' +
+        '<div class="compare-col ' + (ganador === 'abonar' ? 'hi' : '') + '">' +
+          '<h4><span class="dot"></span>Si abonas a capital</h4>' +
+          '<div class="cmp-row"><span class="l">Intereses ahorrados</span><span class="v">$' + fmt(gananciaAbonar) + '</span></div>' +
+          '<div class="cmp-row"><span class="l">Meses ahorrados</span><span class="v">' + (orig.mesesReales - withAb.mesesReales) + '</span></div>' +
+          '<div class="cmp-row"><span class="l">Impuestos</span><span class="v">$0</span></div>' +
+          '<div class="cmp-row"><span class="l"><b>Ganancia neta</b></span><span class="v"><b>$' + fmt(gananciaAbonar) + '</b></span></div>' +
+        '</div>' +
+        '<div class="compare-col ' + (ganador === 'invertir' ? 'purple' : '') + '">' +
+          '<h4><span class="dot"></span>Si inviertes</h4>' +
+          '<div class="cmp-row"><span class="l">Saldo final (bruto)</span><span class="v">$' + fmt(saldoInvBruto) + '</span></div>' +
+          '<div class="cmp-row"><span class="l">Rendimiento bruto</span><span class="v">$' + fmt(gananciaInvertirBruta) + '</span></div>' +
+          '<div class="cmp-row"><span class="l">Retención (' + (impPct*100).toFixed(1) + '%)</span><span class="v" style="color:var(--ikki-red)">−$' + fmt(rendimientoBrutoAcum - rendimientoNetoAcum) + '</span></div>' +
+          '<div class="cmp-row"><span class="l"><b>Ganancia neta</b></span><span class="v"><b>$' + fmt(gananciaInvertirNeta) + '</b></span></div>' +
+        '</div>' +
+      '</div>' +
+    '</div></div>';
+
+    // Gráfico comparativo: ahorro acumulado vs rendimiento neto acumulado
+    html += renderCompareChart(invRows);
+
+    // Tabla mensual
+    html += renderInvestmentTable(invRows, impPct);
+
+    resultsEl.innerHTML = html;
+
+    if (window.innerWidth <= 860) {
+      setTimeout(function() {
+        resultsEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 150);
+    }
+  }
+
+  function renderCompareChart(rows) {
+    var W = 700, H = 240, P = { t: 12, r: 14, b: 24, l: 60 };
+    var maxX = rows.length;
+    var maxY = 0;
+    for (var i = 0; i < rows.length; i++) {
+      if (rows[i].ahorroAcum > maxY) maxY = rows[i].ahorroAcum;
+      if (rows[i].rendNetoAcum > maxY) maxY = rows[i].rendNetoAcum;
+      if (rows[i].rendBrutoAcum > maxY) maxY = rows[i].rendBrutoAcum;
+    }
+    if (maxY === 0) maxY = 1;
+
+    function x(m) { return P.l + (m / maxX) * (W - P.l - P.r); }
+    function y(v) { return P.t + (1 - v / maxY) * (H - P.t - P.b); }
+
+    function buildPath(key) {
+      var d = 'M ' + x(0) + ' ' + y(0);
+      for (var i = 0; i < rows.length; i++) {
+        d += ' L ' + x(rows[i].mes) + ' ' + y(rows[i][key]);
+      }
+      return d;
+    }
+
+    var yLabels = '';
+    for (var t = 0; t <= 4; t++) {
+      var val = maxY * (1 - t/4);
+      var yy = P.t + (t/4) * (H - P.t - P.b);
+      yLabels += '<line x1="'+P.l+'" y1="'+yy+'" x2="'+(W-P.r)+'" y2="'+yy+'" stroke="#EEF1F4" stroke-width="1"/>';
+      yLabels += '<text x="'+(P.l-6)+'" y="'+(yy+4)+'" text-anchor="end" font-size="10" fill="#8B95A2" font-family="DM Sans">$'+fmtCompact(val)+'</text>';
+    }
+    var xLabels = '';
+    var totalYears = Math.ceil(maxX / 12);
+    var step = totalYears <= 10 ? 1 : (totalYears <= 25 ? 2 : 5);
+    for (var yr = 0; yr <= totalYears; yr += step) {
+      var m = yr * 12;
+      if (m > maxX) m = maxX;
+      var xx = x(m);
+      xLabels += '<text x="'+xx+'" y="'+(H-6)+'" text-anchor="middle" font-size="10" fill="#8B95A2" font-family="DM Sans">'+yr+'a</text>';
+    }
+
+    var svg = '<svg class="chart" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">' +
+      yLabels + xLabels +
+      '<path d="'+buildPath('ahorroAcum')+'" fill="none" stroke="#00C853" stroke-width="2.5"/>' +
+      '<path d="'+buildPath('rendBrutoAcum')+'" fill="none" stroke="#6C5CE7" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.7"/>' +
+      '<path d="'+buildPath('rendNetoAcum')+'" fill="none" stroke="#6C5CE7" stroke-width="2.5"/>' +
+    '</svg>';
+
+    var legend = '<div class="chart-legend">' +
+      '<div class="lg"><span class="swatch" style="background:#00C853"></span>Ahorro de intereses (abonar)</div>' +
+      '<div class="lg"><span class="swatch" style="background:#6C5CE7"></span>Rendimiento neto (invertir)</div>' +
+      '<div class="lg"><span class="swatch" style="background:#6C5CE7;opacity:0.5"></span>Rendimiento bruto</div>' +
+    '</div>';
+
+    return '<div class="card"><div class="card-head">Ganancia acumulada</div>' +
+      '<div class="chart-wrap">' + legend + svg + '</div></div>';
+  }
+
+  function renderInvestmentTable(rows, impPct) {
+    var rowsHtml = '';
+    // Mostrar todos los meses con aporte + cada 6 meses + el último
+    var step = rows.length > 60 ? 6 : (rows.length > 24 ? 3 : 1);
+    for (var k = 0; k < rows.length; k++) {
+      var r = rows[k];
+      var isAporte = r.aporte > 0;
+      var isLast = k === rows.length - 1;
+      var show = isAporte || isLast || (r.mes % step === 0);
+      if (!show) continue;
+
+      var diff = r.ahorroAcum - r.rendNetoAcum;
+      var ganaTag = diff >= 0
+        ? '<span class="tag win">Abonar +$'+fmtCompact(diff)+'</span>'
+        : '<span class="tag lose">Invertir +$'+fmtCompact(-diff)+'</span>';
+      var cls = isAporte ? ' class="row-abono"' : (isLast ? ' class="row-end"' : '');
+      rowsHtml += '<tr' + cls + '>' +
+        '<td>' + r.mes + '</td>' +
+        '<td class="ab">' + (isAporte ? '$'+fmt(r.aporte) : '—') + '</td>' +
+        '<td class="cp">$' + fmt(r.ahorroAcum) + '</td>' +
+        '<td style="color:var(--ikki-purple-dark)">$' + fmt(r.rendNetoAcum) + '</td>' +
+        '<td style="opacity:0.6">$' + fmt(r.rendBrutoAcum) + '</td>' +
+        '<td>' + ganaTag + '</td>' +
+      '</tr>';
+    }
+
+    return '<div class="card"><div class="card-head">Detalle mes a mes</div>' +
+      '<div style="padding:0">' +
+      '<div class="scrolltip">Desliza para ver toda la tabla</div>' +
+      '<div class="tw"><table><thead><tr>' +
+      '<th>#</th><th>Aporte</th><th>Ahorro acum.</th><th>Rend. neto</th><th>Rend. bruto</th><th>Ganador</th>' +
+      '</tr></thead><tbody>' + rowsHtml + '</tbody></table></div></div></div>';
+  }
+
+  // ---------- Listeners ----------
   montoEl.addEventListener('input', function() { fmtCur(montoEl); });
   seguroEl.addEventListener('input', function() { fmtCur(seguroEl); });
   tasaEl.addEventListener('input', updateTM);
   plazoEl.addEventListener('input', updatePlazoHint);
 
-  // Button: use both click and touchend for maximum mobile compatibility
-  btnEl.addEventListener('click', function(e) {
-    e.preventDefault();
-    calcular();
+  btnEl.addEventListener('click', function(e) { e.preventDefault(); calcular(false); });
+  simBtnEl.addEventListener('click', function(e) { e.preventDefault(); calcular(true); });
+  addAbonoBtnEl.addEventListener('click', function(e) { e.preventDefault(); addAbonoRow(); });
+  compareBtnEl.addEventListener('click', function(e) { e.preventDefault(); compararAbonarVsInvertir(); });
+
+  rentaInputEl.addEventListener('input', updateRentaEquiv);
+  rentaSegEl.addEventListener('click', function(e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    rentaMode = b.dataset.mode;
+    rentaSegEl.querySelectorAll('button').forEach(function(x){ x.classList.remove('active'); });
+    b.classList.add('active');
+    updateRentaEquiv();
   });
 
-  // Init
+  modeSwitchEl.addEventListener('click', function(e) {
+    var b = e.target.closest('button');
+    if (!b) return;
+    abonoMode = b.dataset.mode;
+    modeSwitchEl.querySelectorAll('button').forEach(function(x){ x.classList.remove('active'); });
+    b.classList.add('active');
+    modeHintEl.textContent = abonoMode === 'plazo'
+      ? 'El plazo se acorta y mantienes la misma cuota.'
+      : 'El plazo se mantiene y la cuota se recalcula más baja.';
+  });
+
+  // ---------- Init ----------
   updateTM();
   updatePlazoHint();
-  calcular();
+  updateRentaEquiv();
+  refreshAbonosEmpty();
+  calcular(false);
 
 })();
 </script>
