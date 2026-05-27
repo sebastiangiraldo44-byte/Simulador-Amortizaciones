@@ -838,13 +838,15 @@
     for (var k = 0; k < rows.length; k++) {
       var r = rows[k];
       var cls = r.abono > 0 ? ' class="row-abono"' : '';
+      // Saldo antes del abono = saldo + abono (si hubo abono)
+      var saldoAntesAbono = r.saldo + (r.abono || 0);
       rowsHtml += '<tr' + cls + '>' +
         '<td>' + r.mes + '</td>' +
         '<td>$' + fmt(r.cuota + seguro) + '</td>' +
         '<td class="cp">$' + fmt(r.capital) + '</td>' +
         '<td class="ci">$' + fmt(r.interes) + '</td>' +
         '<td class="ab">' + (r.abono > 0 ? '$' + fmt(r.abono) : '—') + '</td>' +
-        '<td>$' + fmt(r.saldo) + '</td>' +
+        '<td>$' + fmt(r.saldo) + (r.abono > 0 ? ' <span style="color:var(--ikki-gray);font-size:10px">(antes: $' + fmt(saldoAntesAbono) + ')</span>' : '') + '</td>' +
       '</tr>';
     }
     return '<div class="card"><div class="card-head">' + title + '</div>' +
@@ -1074,6 +1076,7 @@
           '<div class="compare-col">' +
             '<h4><span class="dot"></span>Crédito original</h4>' +
             '<div class="cmp-row"><span class="l">Cuota mensual</span><span class="v">$' + fmt(cuota + seguro) + '</span></div>' +
+            '<div class="cmp-row"><span class="l">N° cuotas</span><span class="v">' + orig.mesesReales + '</span></div>' +
             '<div class="cmp-row"><span class="l">Plazo</span><span class="v">' + plazoTxt(orig.mesesReales) + '</span></div>' +
             '<div class="cmp-row"><span class="l">Intereses</span><span class="v">$' + fmt(orig.totalInt) + '</span></div>' +
             '<div class="cmp-row"><span class="l">Total a pagar</span><span class="v">$' + fmt(totalPagOrig) + '</span></div>' +
@@ -1081,9 +1084,12 @@
           '<div class="compare-col hi">' +
             '<h4><span class="dot"></span>Con abonos</h4>' +
             '<div class="cmp-row"><span class="l">Cuota '+(abonoMode==='cuota'?'final':'mensual')+'</span><span class="v">$' + fmt(cuotaTrasAbono + seguro) + '</span></div>' +
+            '<div class="cmp-row"><span class="l">N° cuotas</span><span class="v">' + withAb.mesesReales + '</span></div>' +
             '<div class="cmp-row"><span class="l">Plazo</span><span class="v">' + plazoTxt(withAb.mesesReales) + '</span></div>' +
             '<div class="cmp-row"><span class="l">Intereses</span><span class="v">$' + fmt(withAb.totalInt) + '</span></div>' +
-            '<div class="cmp-row"><span class="l">Total a pagar</span><span class="v">$' + fmt(totalPagNew) + '</span></div>' +
+            '<div class="cmp-row"><span class="l">Total cuotas</span><span class="v">$' + fmt(totalPagNew - withAb.totalAbonos) + '</span></div>' +
+            '<div class="cmp-row"><span class="l">+ Abonos extra</span><span class="v">$' + fmt(withAb.totalAbonos) + '</span></div>' +
+            '<div class="cmp-row"><span class="l"><b>Total desembolsado</b></span><span class="v"><b>$' + fmt(totalPagNew) + '</b></span></div>' +
           '</div>' +
         '</div>' +
         '<div class="sr" style="margin-bottom:0;margin-top:8px">' +
@@ -1174,9 +1180,9 @@
     // Escenario 1: SIN abonos (original)
     var orig = simular(monto, im, plazo, cuota, {}, 'plazo');
 
-    // Escenario 2: CON abonos (reduciendo plazo - el más común para esta comparación)
-    var plazoMaxSim = plazo + 12;
-    var withAb = simular(monto, im, plazoMaxSim, cuota, abonosData.map, 'plazo');
+    // Escenario 2: CON abonos - usar el MODO que el usuario seleccionó arriba
+    var plazoMaxSim = abonoMode === 'plazo' ? plazo + 12 : plazo;
+    var withAb = simular(monto, im, plazoMaxSim, cuota, abonosData.map, abonoMode);
 
     // Ahorro real de intereses por abonar
     var ahorroIntereses = orig.totalInt - withAb.totalInt;
@@ -1184,10 +1190,11 @@
     var totalAbonado = withAb.totalAbonos;
 
     // Escenario 3: Invertir los abonos en lugar de abonar
-    // El usuario sigue pagando el crédito normal (cuota fija) durante todo el plazo original
-    // y cada "abono" lo deposita en la inversión, que crece mes a mes
-    // Construir línea de tiempo de la inversión
-    var horizonte = orig.mesesReales; // comparamos al final del crédito original
+    // CORRECCIÓN: el horizonte debe ser el plazo ORIGINAL completo, porque ahí es cuando
+    // realmente termina el "compromiso financiero" del crédito sin abonos.
+    // Si reduce plazo: el dinero liberado tras terminar el crédito anticipado también se podría invertir,
+    // pero para mantener comparación justa, comparamos AL FINAL DEL PLAZO ORIGINAL
+    var horizonte = plazo;
     var saldoInvBruto = 0;
     var saldoInvNeto = 0;
     var aportadoAcum = 0;
@@ -1285,7 +1292,19 @@
     }
 
     // Resumen 3 columnas
-    html += '<div class="card"><div class="card-head">Resumen comparativo</div><div class="card-body">' +
+    var modoLabel = abonoMode === 'plazo' ? 'Reducir plazo' : 'Reducir cuota';
+    var cuotaTrasAbono = cuota;
+    if (abonoMode === 'cuota' && withAb.rows.length > 0) {
+      var lastAbonoMes = Math.max.apply(null, abonosData.list.map(function(a){ return a.mes; }));
+      for (var rr = 0; rr < withAb.rows.length; rr++) {
+        if (withAb.rows[rr].mes > lastAbonoMes) {
+          cuotaTrasAbono = withAb.rows[rr].cuota;
+          break;
+        }
+      }
+    }
+
+    html += '<div class="card"><div class="card-head">Resumen comparativo <span class="badge">Modo: ' + modoLabel + '</span></div><div class="card-body">' +
       '<div class="compare3">' +
         '<div class="compare-col">' +
           '<h4><span class="dot"></span>Dinero aportado</h4>' +
@@ -1296,7 +1315,10 @@
         '<div class="compare-col ' + (ganador === 'abonar' ? 'hi' : '') + '">' +
           '<h4><span class="dot"></span>Si abonas a capital</h4>' +
           '<div class="cmp-row"><span class="l">Intereses ahorrados</span><span class="v">$' + fmt(gananciaAbonar) + '</span></div>' +
-          '<div class="cmp-row"><span class="l">Meses ahorrados</span><span class="v">' + (orig.mesesReales - withAb.mesesReales) + '</span></div>' +
+          (abonoMode === 'plazo'
+            ? '<div class="cmp-row"><span class="l">Meses ahorrados</span><span class="v">' + (orig.mesesReales - withAb.mesesReales) + '</span></div>'
+            : '<div class="cmp-row"><span class="l">Cuota tras abono</span><span class="v">$' + fmt(cuotaTrasAbono + seguro) + '</span></div>'
+          ) +
           '<div class="cmp-row"><span class="l">Impuestos</span><span class="v">$0</span></div>' +
           '<div class="cmp-row"><span class="l"><b>Ganancia neta</b></span><span class="v"><b>$' + fmt(gananciaAbonar) + '</b></span></div>' +
         '</div>' +
@@ -1383,7 +1405,6 @@
 
   function renderInvestmentTable(rows, impPct) {
     var rowsHtml = '';
-    // Mostrar todos los meses con aporte + cada 6 meses + el último
     var step = rows.length > 60 ? 6 : (rows.length > 24 ? 3 : 1);
     for (var k = 0; k < rows.length; k++) {
       var r = rows[k];
@@ -1400,9 +1421,9 @@
       rowsHtml += '<tr' + cls + '>' +
         '<td>' + r.mes + '</td>' +
         '<td class="ab">' + (isAporte ? '$'+fmt(r.aporte) : '—') + '</td>' +
+        '<td style="color:var(--ikki-purple-dark);font-weight:600">$' + fmt(r.saldoInvNeto) + '</td>' +
         '<td class="cp">$' + fmt(r.ahorroAcum) + '</td>' +
         '<td style="color:var(--ikki-purple-dark)">$' + fmt(r.rendNetoAcum) + '</td>' +
-        '<td style="opacity:0.6">$' + fmt(r.rendBrutoAcum) + '</td>' +
         '<td>' + ganaTag + '</td>' +
       '</tr>';
     }
@@ -1411,7 +1432,7 @@
       '<div style="padding:0">' +
       '<div class="scrolltip">Desliza para ver toda la tabla</div>' +
       '<div class="tw"><table><thead><tr>' +
-      '<th>#</th><th>Aporte</th><th>Ahorro acum.</th><th>Rend. neto</th><th>Rend. bruto</th><th>Ganador</th>' +
+      '<th>#</th><th>Aporte</th><th>Saldo invertido</th><th>Ahorro acum.</th><th>Rend. neto</th><th>Ganador</th>' +
       '</tr></thead><tbody>' + rowsHtml + '</tbody></table></div></div></div>';
   }
 
